@@ -75,7 +75,9 @@ app.get('/ping-db', async (req, res) => {
         port: process.env.DB_PORT || '3306',
         database: process.env.DB_NAME || 'No configurado',
         ssl: process.env.NODE_ENV === 'production' ? 'Habilitado' : 'Deshabilitado'
-      }
+      },
+      provider: 'Alwaysdata',
+      tip: 'Conexión exitosa a la base de datos MySQL en Alwaysdata.'
     });
   } catch (err) {
     console.error('❌ Error de conexión:', err.message);
@@ -89,9 +91,14 @@ app.get('/ping-db', async (req, res) => {
         database: process.env.DB_NAME || 'No configurado',
         ssl: process.env.NODE_ENV === 'production' ? 'Habilitado' : 'Deshabilitado'
       },
+      provider: 'Alwaysdata',
       tip: err.code === 'ECONNREFUSED' ? 
-        'El error ECONNREFUSED indica que no se puede conectar al host especificado. Si estás en Render, asegúrate de NO usar localhost o 127.0.0.1 como DB_HOST.' : 
-        'Verifica las credenciales y la configuración de la base de datos.'
+        'El error ECONNREFUSED indica que no se puede conectar al host especificado. Si estás en Render, asegúrate de NO usar localhost o 127.0.0.1 como DB_HOST. Para Alwaysdata, usa: mysql-brayamsacasistencia.alwaysdata.net' : 
+        err.code === 'ER_ACCESS_DENIED_ERROR' ?
+        'Error de acceso denegado. Verifica que el usuario (417526_brayamsac) y la contraseña configurados en Render sean correctos.' :
+        err.code === 'ETIMEDOUT' ?
+        'Tiempo de espera agotado. Verifica que Alwaysdata permita conexiones desde Render y que no haya restricciones de IP.' :
+        'Verifica las credenciales y la configuración de la base de datos en el dashboard de Render.'
     });
   }
 });
