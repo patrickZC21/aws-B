@@ -1,0 +1,44 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend para sistema de control de asistencias",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "start": "cross-env NODE_ENV=production node src/index.js",
+    "test": "echo 'Ejecutando tests de integración...' && node tests/integration/test-login-real.js",
+    "test:integration": "echo 'Tests de integración disponibles en tests/integration/'",
+    "test:unit": "echo 'Tests unitarios en desarrollo - carpeta tests/unit/'",
+    "db:check": "node scripts/database/check-users.js",
+    "db:analyze": "node scripts/database/analyze-database.js",
+    "db:encrypt": "node scripts/database/encrypt-passwords.js",
+    "security:audit": "node scripts/database/security-audit.js",
+    "security:check": "npm audit",
+    "security:fix": "npm audit fix",
+    "docs": "echo 'Documentación reorganizada en ./docs/' && echo '📖 docs/DOCS_INDEX.md - Índice de documentación' && echo '🔧 docs/TECHNICAL_DOCS.md - Documentación técnica' && echo '📡 docs/API_GUIDE.md - Guía de API' && echo '🔒 docs/AUDITORIA_SEGURIDAD_BACKEND.md - Auditoría de seguridad' && echo '🌐 http://localhost:3000/api-docs - Swagger UI (servidor ejecutándose)'"
+  },
+  "keywords": [],
+  "author": "Patrick Zamata",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.6.0",
+    "node-fetch": "^3.3.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.10"
+  }
+}
