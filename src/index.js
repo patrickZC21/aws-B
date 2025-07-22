@@ -67,10 +67,32 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
 app.get('/ping-db', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT NOW() AS time');
-    res.json({ connected: true, time: rows[0].time });
+    res.json({ 
+      connected: true, 
+      time: rows[0].time,
+      dbConfig: {
+        host: process.env.DB_HOST?.replace(/^.*@(.*)$/, '$1') || 'No configurado', // Oculta credenciales
+        port: process.env.DB_PORT || '3306',
+        database: process.env.DB_NAME || 'No configurado',
+        ssl: process.env.NODE_ENV === 'production' ? 'Habilitado' : 'Deshabilitado'
+      }
+    });
   } catch (err) {
     console.error('❌ Error de conexión:', err.message);
-    res.status(500).json({ connected: false, error: err.message });
+    res.status(500).json({ 
+      connected: false, 
+      error: err.message,
+      errorCode: err.code,
+      dbConfig: {
+        host: process.env.DB_HOST?.replace(/^.*@(.*)$/, '$1') || 'No configurado', // Oculta credenciales
+        port: process.env.DB_PORT || '3306',
+        database: process.env.DB_NAME || 'No configurado',
+        ssl: process.env.NODE_ENV === 'production' ? 'Habilitado' : 'Deshabilitado'
+      },
+      tip: err.code === 'ECONNREFUSED' ? 
+        'El error ECONNREFUSED indica que no se puede conectar al host especificado. Si estás en Render, asegúrate de NO usar localhost o 127.0.0.1 como DB_HOST.' : 
+        'Verifica las credenciales y la configuración de la base de datos.'
+    });
   }
 });
 

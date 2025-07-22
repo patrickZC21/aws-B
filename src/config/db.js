@@ -27,9 +27,9 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: process.env.MYSQL_CONNECTION_LIMIT || (process.env.NODE_ENV === 'production' ? 10 : 5),
   queueLimit: 0,
-  charset: 'utf8mb4'
-  // Si tu proveedor de base de datos requiere SSL, descomenta y configura:
-  // ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined
+  charset: 'utf8mb4',
+  // Habilitar SSL para conexiones remotas en producción
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined
 });
 
 // Test de conexión silencioso (solo errores)
