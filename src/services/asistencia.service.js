@@ -52,7 +52,6 @@ export const listarAsistencias = async (filtros = {}) => {
       s.nombre AS subalmacen_nombre,
       al.nombre AS almacen_nombre
     FROM asistencias a
-    FORCE INDEX (idx_asistencias_lookup)
     INNER JOIN trabajadores t ON a.trabajador_id = t.id
     INNER JOIN usuarios u ON a.registrado_por = u.id
     INNER JOIN subalmacenes s ON a.subalmacen_id = s.id

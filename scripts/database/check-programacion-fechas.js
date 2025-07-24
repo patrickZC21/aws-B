@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import pool from './src/config/db.js';
+import pool from '../../src/config/db.js';
 
 dotenv.config();
 
