@@ -3,11 +3,28 @@ import jwt from 'jsonwebtoken';
 import { compararPassword } from '../utils/password.helper.js';
 import { logger } from '../utils/logger.js';
 
+// Función auxiliar para ejecutar consultas con reintentos
+const executeQueryWithRetry = async (query, params, maxRetries = 3) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await pool.query(query, params);
+    } catch (error) {
+      if (error.code === 'ECONNRESET' && attempt < maxRetries) {
+        logger.warn(`Intento ${attempt} falló con ECONNRESET, reintentando...`);
+        // Esperar un poco antes del siguiente intento
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        continue;
+      }
+      throw error;
+    }
+  }
+};
+
 // Servicio para validar usuario y generar token (LOGS LIMPIOS)
 export const login = async (correo, contraseña) => {
   try {
-    // ⚡ Consulta optimizada
-    const [rows] = await pool.query(
+    // ⚡ Consulta optimizada con reintentos
+    const [rows] = await executeQueryWithRetry(
       `SELECT u.id, u.nombre, u.correo, u.password, u.rol_id, u.ya_ingreso, r.nombre as nombre_rol
        FROM usuarios u
        JOIN roles r ON u.rol_id = r.id
@@ -47,9 +64,9 @@ export const login = async (correo, contraseña) => {
       { expiresIn: '8h' }
     );
 
-    // Update asíncrono no bloqueante
+    // Update asíncrono no bloqueante con reintentos
     setImmediate(() => {
-      pool.query('UPDATE usuarios SET ya_ingreso = 1 WHERE id = ?', [usuario.id])
+      executeQueryWithRetry('UPDATE usuarios SET ya_ingreso = 1 WHERE id = ?', [usuario.id])
         .catch(err => logger.error('Error en update ya_ingreso:', err));
     });
 
@@ -74,13 +91,13 @@ export const login = async (correo, contraseña) => {
 // ✅ Servicio para logout - marcar usuario como desconectado
 export const logout = async (userId) => {
   try {
-    await pool.query(
+    await executeQueryWithRetry(
       'UPDATE usuarios SET ya_ingreso = 0 WHERE id = ?',
       [userId]
     );
     return { success: true };
   } catch (error) {
-    console.error('❌ Error en logout:', error);
+    logger.error('Error en logout:', error);
     return { error: 'Error al cerrar sesión', code: 500 };
   }
 };
@@ -88,13 +105,13 @@ export const logout = async (userId) => {
 // ✅ Servicio para forzar desconexión de usuario (para admins)
 export const forzarDesconexion = async (userId) => {
   try {
-    await pool.query(
+    await executeQueryWithRetry(
       'UPDATE usuarios SET ya_ingreso = 0 WHERE id = ?',
       [userId]
     );
     return { success: true, message: 'Usuario desconectado exitosamente' };
   } catch (error) {
-    console.error('❌ Error al forzar desconexión:', error);
+    logger.error('Error al forzar desconexión:', error);
     return { error: 'Error al forzar desconexión', code: 500 };
   }
 };
@@ -102,7 +119,7 @@ export const forzarDesconexion = async (userId) => {
 // ✅ Servicio para forzar logout por correo (para resolver conflictos de sesión)
 export const forzarLogoutPorCorreo = async (correo) => {
   try {
-    const [result] = await pool.query(
+    const [result] = await executeQueryWithRetry(
       'UPDATE usuarios SET ya_ingreso = 0 WHERE correo = ?',
       [correo]
     );
@@ -113,7 +130,7 @@ export const forzarLogoutPorCorreo = async (correo) => {
     
     return { success: true, message: 'Sesión anterior cerrada exitosamente' };
   } catch (error) {
-    console.error('❌ Error al forzar logout por correo:', error);
+    logger.error('Error al forzar logout por correo:', error);
     return { error: 'Error al cerrar sesión anterior', code: 500 };
   }
 };
