@@ -35,8 +35,11 @@ export const helmetConfig = helmet({
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
-      frameSrc: ["'none'"],
+      // Permitir iframes en desarrollo, bloquear en producción
+      frameSrc: process.env.NODE_ENV === 'development' ? ["'self'", "http://localhost:*"] : ["'none'"],
     },
   },
   crossOriginEmbedderPolicy: false, // Necesario para algunos casos de CORS
+  // Configurar X-Frame-Options para permitir iframes en desarrollo
+  frameguard: process.env.NODE_ENV === 'development' ? { action: 'sameorigin' } : { action: 'deny' },
 });
