@@ -1,16 +1,7 @@
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 
-// Rate limiting para login
-export const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 5, // Máximo 5 intentos por ventana de tiempo
-  message: {
-    error: 'Demasiados intentos de login. Intenta de nuevo en 15 minutos.'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+
 
 // Rate limiting general para API
 export const apiLimiter = rateLimit({

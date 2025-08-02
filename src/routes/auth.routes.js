@@ -1,7 +1,6 @@
 import express from "express";
 import * as AuthController from "../controllers/auth.controller.js";
 import { verificarToken } from "../middlewares/auth.middleware.js";
-import { loginLimiter } from "../middlewares/security.middleware.js";
 import { validarLogin } from "../middlewares/validation.middleware.js";
 
 const router = express.Router();
@@ -45,10 +44,8 @@ const router = express.Router();
  *               $ref: '#/components/schemas/Error'
  *       401:
  *         description: Credenciales incorrectas
- *       429:
- *         description: Demasiados intentos de login
  */
-router.post("/login", loginLimiter, validarLogin, AuthController.login);
+router.post("/login", validarLogin, AuthController.login);
 
 /**
  * @swagger
