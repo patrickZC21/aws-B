@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: brayamsac-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node src/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # IMPORTANTE: Configura estas variables en el dashboard de Render
+      # NO uses 'localhost' o '127.0.0.1' como DB_HOST
+      # Para Alwaysdata, usa: mysql-brayamsacasistencia.alwaysdata.net
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+        value: 3306
+      # Para Alwaysdata, usa: 417526_brayamsac
+      - key: DB_USER
+        sync: false
+      # Usa la contraseña de tu cuenta de Alwaysdata
+      - key: DB_PASSWORD
+        sync: false
+      # Para Alwaysdata, usa: brayamsacasistencia_control_asistencias
+      - key: DB_NAME
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: FRONTEND_URL
+        value: https://brayamsac-frontend.vercel.app
+      - key: MYSQL_CONNECTION_LIMIT
+        value: 10
