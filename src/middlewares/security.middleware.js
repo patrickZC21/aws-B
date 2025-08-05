@@ -1,6 +1,7 @@
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 
+<<<<<<< HEAD
 // Rate limiting para login
 export const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
@@ -11,6 +12,9 @@ export const loginLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+=======
+
+>>>>>>> 84d863e48b0cc81d74df05d6b74a1686e5982f86
 
 // Rate limiting general para API
 export const apiLimiter = rateLimit({
@@ -35,8 +39,18 @@ export const helmetConfig = helmet({
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
+<<<<<<< HEAD
       frameSrc: ["'none'"],
     },
   },
   crossOriginEmbedderPolicy: false, // Necesario para algunos casos de CORS
+=======
+      // Permitir iframes en desarrollo, bloquear en producción
+      frameSrc: process.env.NODE_ENV === 'development' ? ["'self'", "http://localhost:*"] : ["'none'"],
+    },
+  },
+  crossOriginEmbedderPolicy: false, // Necesario para algunos casos de CORS
+  // Configurar X-Frame-Options para permitir iframes en desarrollo
+  frameguard: process.env.NODE_ENV === 'development' ? { action: 'sameorigin' } : { action: 'deny' },
+>>>>>>> 84d863e48b0cc81d74df05d6b74a1686e5982f86
 });

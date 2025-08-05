@@ -36,23 +36,43 @@ const app = express();
 app.use(helmetConfig); // Headers de seguridad
 app.use(apiLimiter); // Rate limiting general
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [
-        process.env.FRONTEND_URL || 'https://brayamsac-frontend.vercel.app',
-        'https://brayamsac-frontend.vercel.app',
-        'https://brayamsac-frontend-git-main-brayamsactls-projects.vercel.app',
-        'https://brayamsac-frontend-brayamsactls-projects.vercel.app'
-      ]
-    : [
-        'http://localhost:5173',
-        'http://localhost:5174', 
-        'http://localhost:5175',
-        'http://localhost:3000'
-      ],
+  origin: function (origin, callback) {
+    // Permitir requests sin origin (apps móviles nativas)
+    if (!origin) return callback(null, true);
+    
+    // URLs permitidas para aplicaciones web
+    const allowedOrigins = [
+      // URLs de producción - Vercel
+      process.env.FRONTEND_URL || 'https://brayamsac-frontend.vercel.app',
+      'https://brayamsac-frontend.vercel.app',
+      'https://brayamsac-frontend-git-main-brayamsactls-projects.vercel.app',
+      'https://brayamsac-frontend-brayamsactls-projects.vercel.app',
+      // URLs de desarrollo local
+      'http://localhost:5173',
+      'http://localhost:5174', 
+      'http://localhost:5175',
+      'http://localhost:3000'
+    ];
+    
+    // Verificar si el origin está en la lista permitida
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // Para apps móviles y otros clientes, permitir acceso
+    // (las apps móviles nativas no envían origin)
+    callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  optionsSuccessStatus: 200
+  allowedHeaders: [
+    'Content-Type', 
+    'Authorization', 
+    'X-Requested-With',
+    'Accept',
+    'Origin'
+  ],
+  optionsSuccessStatus: 200 // Para compatibilidad con navegadores legacy
 }));
 app.use(express.json({ limit: '10mb' })); // Limitar tamaño del body
 app.use(sanitizarInput); // Sanitización de input
