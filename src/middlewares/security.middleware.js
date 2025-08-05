@@ -31,7 +31,14 @@ export const helmetConfig = helmet({
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'"],
       imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'"],
+      // Permitir conexiones a Vercel y localhost
+      connectSrc: [
+        "'self'",
+        "https://brayamsac-frontend.vercel.app",
+        "https://brayamsac-frontend-git-main-brayamsactls-projects.vercel.app",
+        "https://brayamsac-frontend-brayamsactls-projects.vercel.app",
+        "http://localhost:*"
+      ],
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
@@ -40,6 +47,7 @@ export const helmetConfig = helmet({
     },
   },
   crossOriginEmbedderPolicy: false, // Necesario para algunos casos de CORS
+  crossOriginResourcePolicy: { policy: "cross-origin" }, // Permitir recursos cross-origin
   // Configurar X-Frame-Options para permitir iframes en desarrollo
   frameguard: process.env.NODE_ENV === 'development' ? { action: 'sameorigin' } : { action: 'deny' },
 });

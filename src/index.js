@@ -32,35 +32,50 @@ import rotacionRoutes from './routes/rotacion.routes.js';
 import notificationsRoutes from './routes/notifications.routes.js';
 const app = express();
 
-// 🛡️ Middlewares de seguridad
-app.use(helmetConfig); // Headers de seguridad
-app.use(apiLimiter); // Rate limiting general
+// 🛡️ Middlewares de seguridad - CORS debe ir PRIMERO
 app.use(cors({
   origin: function (origin, callback) {
+    // Log para debugging
+    console.log('🔍 CORS Origin Request:', origin);
+    
     // Permitir requests sin origin (apps móviles nativas)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      console.log('✅ CORS: Permitiendo request sin origin (app móvil)');
+      return callback(null, true);
+    }
     
     // URLs permitidas para aplicaciones web
     const allowedOrigins = [
-      // URLs de producción - Vercel
-      process.env.FRONTEND_URL || 'https://brayamsac-frontend.vercel.app',
+      // URLs de producción - Vercel (todas las variantes posibles)
       'https://brayamsac-frontend.vercel.app',
       'https://brayamsac-frontend-git-main-brayamsactls-projects.vercel.app',
       'https://brayamsac-frontend-brayamsactls-projects.vercel.app',
+      process.env.FRONTEND_URL,
       // URLs de desarrollo local
       'http://localhost:5173',
       'http://localhost:5174', 
       'http://localhost:5175',
       'http://localhost:3000'
-    ];
+    ].filter(Boolean); // Remover valores undefined/null
+    
+    console.log('🔧 CORS: URLs permitidas:', allowedOrigins);
     
     // Verificar si el origin está en la lista permitida
     if (allowedOrigins.includes(origin)) {
+      console.log('✅ CORS: Origin permitido:', origin);
       return callback(null, true);
     }
     
-    // Para apps móviles y otros clientes, permitir acceso
-    // (las apps móviles nativas no envían origin)
+    // Log de origin no permitido
+    console.log('❌ CORS: Origin NO permitido:', origin);
+    
+    // En producción, ser más estricto
+    if (process.env.NODE_ENV === 'production') {
+      return callback(new Error('No permitido por política CORS'), false);
+    }
+    
+    // En desarrollo, permitir todos los origins
+    console.log('⚠️ CORS: Permitiendo en modo desarrollo');
     callback(null, true);
   },
   credentials: true,
@@ -74,6 +89,8 @@ app.use(cors({
   ],
   optionsSuccessStatus: 200 // Para compatibilidad con navegadores legacy
 }));
+app.use(helmetConfig); // Headers de seguridad (después de CORS)
+app.use(apiLimiter); // Rate limiting general
 app.use(express.json({ limit: '10mb' })); // Limitar tamaño del body
 app.use(sanitizarInput); // Sanitización de input
 
