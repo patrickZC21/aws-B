@@ -128,12 +128,38 @@ export const obtenerAsistencia = async (req, res) => {
 // Actualizar asistencia
 export const actualizarAsistencia = async (req, res) => {
   try {
+    console.log('[actualizarAsistencia] Solicitud recibida:', {
+      id: req.params.id,
+      body: req.body,
+      headers: {
+        'content-type': req.headers['content-type'],
+        'authorization': req.headers['authorization'] ? 'Bearer [PRESENTE]' : 'NO PRESENTE'
+      }
+    });
+
     const affectedRows = await AsistenciaService.actualizarAsistencia(req.params.id, req.body);
-    if (affectedRows === 0) return res.status(404).json({ error: 'Asistencia no encontrada' });
+    
+    if (affectedRows === 0) {
+      console.log('[actualizarAsistencia] No se encontró la asistencia con ID:', req.params.id);
+      return res.status(404).json({ error: 'Asistencia no encontrada' });
+    }
+    
+    console.log('[actualizarAsistencia] Asistencia actualizada exitosamente');
     res.json({ mensaje: 'Asistencia actualizada correctamente' });
   } catch (error) {
-    console.error('Error al actualizar asistencia:', error);
-    res.status(500).json({ error: 'Error al actualizar asistencia' });
+    console.error('[actualizarAsistencia] Error completo:', {
+      message: error.message,
+      stack: error.stack,
+      id: req.params.id,
+      body: req.body
+    });
+    
+    // Enviar mensaje de error más específico
+    const errorMessage = error.message.includes('inválido') || error.message.includes('Formato') 
+      ? error.message 
+      : 'Error al actualizar asistencia';
+    
+    res.status(500).json({ error: errorMessage });
   }
 };
 

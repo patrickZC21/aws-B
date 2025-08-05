@@ -107,41 +107,64 @@ export const obtenerAsistencia = async (id) => {
 
 // Actualizar asistencia - Optimizada
 export const actualizarAsistencia = async (id, datos) => {
-  // Validar que el ID sea numérico
-  if (!id || isNaN(id)) {
-    throw new Error('ID de asistencia inválido');
-  }
-
-  // Solo actualizar los campos enviados (para edición inline)
-  const campos = [];
-  const valores = [];
-  
-  // Solo procesar campos permitidos para edición inline
-  const camposPermitidos = ['hora_entrada', 'hora_salida', 'justificacion'];
-  
-  for (const campo of camposPermitidos) {
-    if (campo in datos) {
-      campos.push(`${campo} = ?`);
-      valores.push(datos[campo] ?? null);
+  try {
+    // Validar que el ID sea numérico
+    if (!id || isNaN(id)) {
+      throw new Error('ID de asistencia inválido');
     }
-  }
-  
-  // Si no hay campos para actualizar, retornar sin hacer nada
-  if (campos.length === 0) {
-    console.log('[actualizarAsistencia] No hay campos para actualizar');
-    return 0;
-  }
 
-  // Agregar timestamp de actualización
-  campos.push('updated_at = NOW()');
-  
-  const sql = `UPDATE asistencias SET ${campos.join(', ')} WHERE id = ? LIMIT 1`;
-  valores.push(id);
-  
-  console.log('[actualizarAsistencia] Ejecutando:', sql, valores);
-  
-  const [result] = await pool.query(sql, valores);
-  return result.affectedRows;
+    // Validar que datos sea un objeto
+    if (!datos || typeof datos !== 'object') {
+      throw new Error('Datos de actualización inválidos');
+    }
+
+    // Solo actualizar los campos enviados (para edición inline)
+    const campos = [];
+    const valores = [];
+    
+    // Solo procesar campos permitidos para edición inline
+    const camposPermitidos = ['hora_entrada', 'hora_salida', 'justificacion'];
+    
+    for (const campo of camposPermitidos) {
+      if (campo in datos) {
+        // Validar formato de hora si es necesario
+        if ((campo === 'hora_entrada' || campo === 'hora_salida') && datos[campo] !== null && datos[campo] !== '') {
+          const horaRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+          if (!horaRegex.test(datos[campo])) {
+            throw new Error(`Formato de ${campo} inválido. Use HH:MM`);
+          }
+        }
+        
+        campos.push(`${campo} = ?`);
+        // Convertir cadenas vacías a null
+        const valor = datos[campo] === '' ? null : datos[campo];
+        valores.push(valor);
+      }
+    }
+    
+    // Si no hay campos para actualizar, retornar sin hacer nada
+    if (campos.length === 0) {
+      console.log('[actualizarAsistencia] No hay campos para actualizar');
+      return 0;
+    }
+
+    // Agregar timestamp de actualización usando CURRENT_TIMESTAMP para mejor compatibilidad
+    campos.push('updated_at = CURRENT_TIMESTAMP');
+    
+    const sql = `UPDATE asistencias SET ${campos.join(', ')} WHERE id = ? LIMIT 1`;
+    valores.push(id);
+    
+    console.log('[actualizarAsistencia] Ejecutando:', sql, valores);
+    
+    const [result] = await pool.query(sql, valores);
+    console.log('[actualizarAsistencia] Resultado:', result.affectedRows, 'filas afectadas');
+    
+    return result.affectedRows;
+  } catch (error) {
+    console.error('[actualizarAsistencia] Error:', error.message);
+    console.error('[actualizarAsistencia] Stack:', error.stack);
+    throw error;
+  }
 };
 
 // Eliminar asistencia
