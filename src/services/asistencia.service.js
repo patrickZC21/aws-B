@@ -148,8 +148,7 @@ export const actualizarAsistencia = async (id, datos) => {
       return 0;
     }
 
-    // Agregar timestamp de actualización usando CURRENT_TIMESTAMP para mejor compatibilidad
-    campos.push('updated_at = CURRENT_TIMESTAMP');
+    // Timestamp de actualización removido - columna updated_at no existe en producción
     
     const sql = `UPDATE asistencias SET ${campos.join(', ')} WHERE id = ? LIMIT 1`;
     valores.push(id);
