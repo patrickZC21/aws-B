@@ -19,7 +19,7 @@ module.exports = {
     
     env_production: {
       NODE_ENV: 'production',
-      PORT: process.env.PORT || 80,
+      PORT: process.env.PORT || 10000,
       DB_HOST: process.env.DB_HOST,
       DB_USER: process.env.DB_USER,
       DB_PASSWORD: process.env.DB_PASSWORD,
@@ -112,7 +112,7 @@ module.exports = {
     // Configuración específica para AWS EC2
     env_aws: {
       NODE_ENV: 'production',
-      PORT: 80,
+      PORT: 10000,
       INSTANCE_TYPE: 'aws-ec2',
       LOG_LEVEL: 'info',
       DISABLE_LOGIN_LOGS: 'true',
