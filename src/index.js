@@ -119,8 +119,8 @@ app.get('/ping-db', async (req, res) => {
         database: process.env.DB_NAME || 'No configurado',
         ssl: process.env.NODE_ENV === 'production' ? 'Habilitado' : 'Deshabilitado'
       },
-      provider: 'Alwaysdata',
-      tip: 'Conexión exitosa a la base de datos MySQL en Alwaysdata.'
+      provider: 'AWS RDS',
+      tip: 'Conexión exitosa a la base de datos MySQL en AWS RDS.'
     });
   } catch (err) {
     console.error('❌ Error de conexión:', err.message);
@@ -134,14 +134,14 @@ app.get('/ping-db', async (req, res) => {
         database: process.env.DB_NAME || 'No configurado',
         ssl: process.env.NODE_ENV === 'production' ? 'Habilitado' : 'Deshabilitado'
       },
-      provider: 'Alwaysdata',
+      provider: 'AWS RDS',
       tip: err.code === 'ECONNREFUSED' ? 
-        'El error ECONNREFUSED indica que no se puede conectar al host especificado. Si estás en Render, asegúrate de NO usar localhost o 127.0.0.1 como DB_HOST. Para Alwaysdata, usa: mysql-brayamsacasistencia.alwaysdata.net' : 
+        'El error ECONNREFUSED indica que no se puede conectar al host especificado. Verifica que el host de AWS RDS sea correcto y que la instancia esté ejecutándose.' : 
         err.code === 'ER_ACCESS_DENIED_ERROR' ?
-        'Error de acceso denegado. Verifica que el usuario (417526_brayamsac) y la contraseña configurados en Render sean correctos.' :
+        'Error de acceso denegado. Verifica que el usuario y la contraseña de AWS RDS sean correctos y que los Security Groups permitan la conexión.' :
         err.code === 'ETIMEDOUT' ?
-        'Tiempo de espera agotado. Verifica que Alwaysdata permita conexiones desde Render y que no haya restricciones de IP.' :
-        'Verifica las credenciales y la configuración de la base de datos en el dashboard de Render.'
+        'Tiempo de espera agotado. Verifica los Security Groups de AWS RDS y que el puerto 3306 esté abierto para tu IP.' :
+        'Verifica las credenciales y la configuración de AWS RDS en las variables de entorno.'
     });
   }
 });

@@ -32,14 +32,12 @@ export const helmetConfig = helmet({
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'"],
       imgSrc: ["'self'", "data:", "https:"],
-      // Permitir conexiones a Vercel y localhost
+      // Permitir conexiones al frontend y localhost
       connectSrc: [
         "'self'",
-        "https://brayamsac-frontend.vercel.app",
-        "https://brayamsac-frontend-git-main-brayamsactls-projects.vercel.app",
-        "https://brayamsac-frontend-brayamsactls-projects.vercel.app",
+        process.env.FRONTEND_URL || "https://d23z3xo2l9ntjm.cloudfront.net",
         "http://localhost:*"
-      ],
+      ].filter(Boolean),
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],

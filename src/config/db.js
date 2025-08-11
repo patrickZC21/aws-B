@@ -11,10 +11,10 @@ const __dirname = path.dirname(__filename);
 const envPath = path.join(__dirname, '..', '..', '.env');
 dotenv.config({ path: envPath });
 
-// También cargar variables de optimización si estamos en producción
+// También cargar variables de producción si estamos en producción
 if (process.env.NODE_ENV === 'production') {
-  const optimizationPath = path.join(__dirname, '..', '..', '.env.render');
-  dotenv.config({ path: optimizationPath });
+  const productionPath = path.join(__dirname, '..', '..', '.env.production');
+  dotenv.config({ path: productionPath });
 }
 
 // ⚡ CONFIGURACIÓN OPTIMIZADA PARA PRODUCCIÓN CON RECONEXIÓN AUTOMÁTICA
@@ -28,8 +28,14 @@ const pool = mysql.createPool({
   connectionLimit: process.env.MYSQL_CONNECTION_LIMIT || (process.env.NODE_ENV === 'production' ? 10 : 5),
   queueLimit: 0,
   charset: 'utf8mb4',
+  acquireTimeout: 60000,
+  timeout: 60000,
+  reconnect: true,
   // Habilitar SSL para conexiones remotas en producción (AWS RDS requiere SSL)
-  ssl: process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined
+  ssl: process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true' ? {
+    rejectUnauthorized: false,
+    ca: undefined
+  } : undefined
 });
 
 // Test de conexión silencioso (solo errores)

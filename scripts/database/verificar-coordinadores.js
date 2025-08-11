@@ -1,14 +1,22 @@
 import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
+
+// Cargar variables de entorno
+dotenv.config();
 
 async function verificarCoordinadores() {
   const pool = mysql.createPool({
-    host: 'mysql-brayamsacasistencia.alwaysdata.net',
-    user: '417526_brayamsac',
-    password: 'MZAE1vmKIBsq3elT7vUefwjL6cXKR6',
-    database: 'brayamsacasistencia_control_asistencias',
+    host: process.env.DB_HOST || 'brayamsac-bd-asistencias.cd6ygkkwilu7.sa-east-1.rds.amazonaws.com',
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER || 'admin',
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME || 'brayamsac-bd-asistencias',
     waitForConnections: true,
     connectionLimit: 15,
-    queueLimit: 0
+    queueLimit: 0,
+    ssl: process.env.DB_SSL === 'true' ? {
+      rejectUnauthorized: false
+    } : undefined
   });
 
   try {
