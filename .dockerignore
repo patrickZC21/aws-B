@@ -1,0 +1,176 @@
+# Docker ignore file para Brayamsac Backend
+# Excluye archivos innecesarios del contexto de build
+
+# Dependencias
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.render
+
+# Temporary folders
+tmp/
+temp/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Documentation
+*.md
+README*
+CHANGELOG*
+LICENSE*
+docs/
+
+# Test files
+test/
+tests/
+__tests__/
+*.test.js
+*.spec.js
+jest.config.js
+.jest/
+
+# Build tools
+.babelrc
+.eslintrc*
+.prettierrc*
+webpack.config.js
+rollup.config.js
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+Jenkinsfile
+
+# Backup files
+*.backup
+*.bak
+*.old
+
+# Database files
+*.sqlite
+*.db
+database/backups/
+database/dumps/
+
+# Uploads (development)
+uploads/
+
+# Monitoring
+monitoring/
+
+# Scripts de desarrollo
+scripts/dev-*
+scripts/test-*
+
+# Archivos de configuración local
+config/local.js
+config/development.js
+
+# PM2
+ecosystem.config.js
+
+# Nginx
+nginx/
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.csr
+
+# AWS
+.aws/
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Kubernetes
+k8s/
+*.yaml
+*.yml
+
+# Helm
+charts/
+
+# Misc
+.cache/
+.tmp/
+*.tmp

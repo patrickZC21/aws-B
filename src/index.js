@@ -30,6 +30,7 @@ import usuarioAlmacenesRoutes from './routes/usuarioAlmacenes.routes.js';
 import trabajadorAsistenciaRoutes from './routes/trabajadorAsistencia.routes.js';
 import rotacionRoutes from './routes/rotacion.routes.js';
 import notificationsRoutes from './routes/notifications.routes.js';
+import healthRoutes from './routes/health.js';
 const app = express();
 
 // 🛡️ Middlewares de seguridad - CORS debe ir PRIMERO
@@ -46,10 +47,9 @@ app.use(cors({
     
     // URLs permitidas para aplicaciones web
     const allowedOrigins = [
-      // URLs de producción - Vercel (todas las variantes posibles)
-      'https://brayamsac-frontend.vercel.app',
-      'https://brayamsac-frontend-git-main-brayamsactls-projects.vercel.app',
-      'https://brayamsac-frontend-brayamsactls-projects.vercel.app',
+      // URLs de producción - CloudFront (AWS)
+      'https://d23z3xo2l9ntjm.cloudfront.net',
+      
       process.env.FRONTEND_URL,
       // URLs de desarrollo local
       'http://localhost:5173',
@@ -194,6 +194,7 @@ app.use('/api/usuario-almacenes', usuarioAlmacenesRoutes);
 app.use('/api/trabajadorAsistencia', trabajadorAsistenciaRoutes);
 app.use('/api/rotaciones', rotacionRoutes);
 app.use('/api/notifications', notificationsRoutes);
+app.use('/', healthRoutes);
 // 🚨 Middleware de errores (siempre al final)
 app.use(manejarErrores);
 

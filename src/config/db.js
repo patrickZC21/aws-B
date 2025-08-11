@@ -28,8 +28,8 @@ const pool = mysql.createPool({
   connectionLimit: process.env.MYSQL_CONNECTION_LIMIT || (process.env.NODE_ENV === 'production' ? 10 : 5),
   queueLimit: 0,
   charset: 'utf8mb4',
-  // Habilitar SSL para conexiones remotas en producción
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined
+  // Habilitar SSL para conexiones remotas en producción (AWS RDS requiere SSL)
+  ssl: process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined
 });
 
 // Test de conexión silencioso (solo errores)
