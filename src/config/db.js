@@ -15,7 +15,20 @@ dotenv.config({ path: envPath });
 if (process.env.NODE_ENV === 'production') {
   const productionPath = path.join(__dirname, '..', '..', '.env.production');
   dotenv.config({ path: productionPath });
+  console.log('🔧 Cargando configuración de producción desde:', productionPath);
+} else {
+  console.log('🔧 Modo desarrollo - usando .env local');
 }
+
+// Debug de configuración de BD
+console.log('🔍 Configuración BD:', {
+  host: process.env.DB_HOST || 'No configurado',
+  port: process.env.DB_PORT || '3306',
+  user: process.env.DB_USER || 'No configurado',
+  database: process.env.DB_NAME || 'No configurado',
+  ssl: process.env.DB_SSL || 'false',
+  nodeEnv: process.env.NODE_ENV || 'development'
+});
 
 // ⚡ CONFIGURACIÓN OPTIMIZADA PARA PRODUCCIÓN CON RECONEXIÓN AUTOMÁTICA
 const pool = mysql.createPool({
@@ -28,9 +41,7 @@ const pool = mysql.createPool({
   connectionLimit: process.env.MYSQL_CONNECTION_LIMIT || (process.env.NODE_ENV === 'production' ? 10 : 5),
   queueLimit: 0,
   charset: 'utf8mb4',
-  acquireTimeout: 60000,
-  timeout: 60000,
-  reconnect: true,
+
   // Habilitar SSL para conexiones remotas en producción (AWS RDS requiere SSL)
   ssl: process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true' ? {
     rejectUnauthorized: false,
