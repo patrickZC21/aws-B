@@ -30,7 +30,7 @@ console.log('🔍 Configuración BD:', {
   nodeEnv: process.env.NODE_ENV || 'development'
 });
 
-// ⚡ CONFIGURACIÓN OPTIMIZADA PARA PRODUCCIÓN CON RECONEXIÓN AUTOMÁTICA
+// ⚡ CONFIGURACIÓN SIN LIMITACIONES - MÁXIMO RENDIMIENTO
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT || 3306,
@@ -38,10 +38,14 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   waitForConnections: true,
-  connectionLimit: process.env.MYSQL_CONNECTION_LIMIT || (process.env.NODE_ENV === 'production' ? 10 : 5),
-  queueLimit: 0,
+  connectionLimit: 100, // Límite muy alto de conexiones
+  queueLimit: 0, // Sin límite en la cola
   charset: 'utf8mb4',
-
+  acquireTimeout: 0, // Sin timeout para adquirir conexión
+  timeout: 0, // Sin timeout para queries
+  reconnect: true, // Reconexión automática
+  idleTimeout: 0, // Sin timeout para conexiones idle
+  
   // Habilitar SSL para conexiones remotas en producción (AWS RDS requiere SSL)
   ssl: process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true' ? {
     rejectUnauthorized: false,

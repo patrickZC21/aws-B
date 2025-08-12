@@ -91,7 +91,8 @@ app.use(cors({
 }));
 app.use(helmetConfig); // Headers de seguridad (después de CORS)
 app.use(apiLimiter); // Rate limiting general
-app.use(express.json({ limit: '10mb' })); // Limitar tamaño del body
+app.use(express.json({ limit: '100mb' })); // Límite muy alto para el body
+app.use(express.urlencoded({ extended: true, limit: '100mb' })); // Para formularios
 app.use(sanitizarInput); // Sanitización de input
 
 // 🧪 Ruta de prueba del servidor

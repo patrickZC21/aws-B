@@ -1,28 +1,15 @@
-import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 
-// Rate limiting para login - Deshabilitado
-export const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 1000, // Límite muy alto para efectivamente deshabilitar
-  message: {
-    error: 'Demasiados intentos de login. Intenta de nuevo en 15 minutos.'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  skip: () => true, // Saltar el rate limiting completamente
-});
+// Rate limiting COMPLETAMENTE DESHABILITADO
+// Middleware que no hace nada - permite todas las peticiones
+export const loginLimiter = (req, res, next) => {
+  next();
+};
 
-// Rate limiting general para API
-export const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: process.env.NODE_ENV === 'development' ? 1000 : 100, // Más permisivo en desarrollo
-  message: {
-    error: 'Demasiadas peticiones. Intenta de nuevo más tarde.'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+// Rate limiting general COMPLETAMENTE DESHABILITADO
+export const apiLimiter = (req, res, next) => {
+  next();
+};
 
 // Configuración de helmet para headers de seguridad
 export const helmetConfig = helmet({
